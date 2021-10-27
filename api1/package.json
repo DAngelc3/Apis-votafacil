@@ -4,9 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "forever src/index.js",
     "dev": "nodemon src/index.js",
-    "stop": "forever stop 0"
   },
   "keywords": [],
   "author": "",
