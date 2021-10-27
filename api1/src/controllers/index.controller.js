@@ -21,7 +21,7 @@ const getvotacion = async (req, res) => {
     "SELECT * FROM public.votantes WHERE rut = $1",
     [rut]
   );
-  res.json(response.rows); //responde en formato json el contenido de response
+  res.send(res.json(response.rows)); //responde en formato json el contenido de response
 };
 
 const insertvoto = async (req, res) => {
@@ -37,7 +37,7 @@ const insertvoto = async (req, res) => {
     "INSERT INTO public.usuario VALUES ($1,$2,$3,$4,$5,$6)",
     [rut, correo, voto, mesa, hash, ipvoto]
   );
-  res.json("Su voto fue introducido correctamente");
+  res.send(res.json("Su voto fue introducido correctamente"));
 };
 
 //login
@@ -57,36 +57,39 @@ const login = async (req, res) => {
     "SELECT usuarios.rut, votacion.nombre, votacion.fecha_inicio, votacion.fecha_termino, eleccion.nombre, opcion.nombre, opcion.opcion FROM usuario JOIN registro ON usuario.rut = registro.rut JOIN votacion ON registro.id_votacion = votacion.id_votacion JOIN opcion ON opcion.id_votacion = votacion.id_votacion JOIN eleccion ON option.id_eleccion = eleccion.id_eleccion WHERE usuario.rut = $1 AND usuario.clave = $2",
     [rut, pass]
   );
-  //const response = await pool.query("SELECT * FROM public.usuarios");
   res.send(res.json(response.rows));
 };
 
 //exportacion
 const exportacion = async (req, res) => {
+  const { rut } = req.body;
   const response = await pool.query(
     "SELECT urna.hash, urna.id_voto, registro.rut FROM urna JOIN registro ON urna.id_votacion = registro.id_votacion"
   );
+  const id = response[id_voto]
+  await pool.query(
+    "UPDATE export SET id_voto = $1,  WHERE rut = $2",[id, rut]
+  );
   res.send(res.json(response.rows));
 };
-//actualización de datos
-const datos = async (req, res) => {
-  var cons = 0;
-  const { archivo } = req.body;
-  var contenido = JSON.parse(archivo);
-  function obtener_datos(contenido, cons) {
-    datos_id[cons] = contenido[id_voto];
-    if (contenido[id_voto.length] != cons) obtener_datos(contenido, cons + 1);
-    else return datos_id;
-  }
+
+//actualizar datos de exportacion
+const actualizar = async (req, res) => {
+  const { rut } = req.body;
+  const id = await pool.query(
+    "SELECT id_voto FROM export WHERE rut = $1",[rut]
+    );
   const response = await pool.query(
-    "SELECT urna.hash, urna.id_voto, registro.rut FROM urna JOIN registro ON urna.id_votacion = registro.id_votacion"
+    "SELECT urna.hash, urna.id_voto, registro.rut FROM urna JOIN registro ON urna.id_votacion = registro.id_votacion WHERE id_voto >= $1",
+    [id] //problemas si las id no son continuas ¿?
   );
   res.send(res.json(response.rows));
 };
 
 module.exports = {
   //exportar todos las funciones
-  datos,
+  exportacion,
+  actualizar,
   getvotacion,
   insertvoto,
   getpartpoli,

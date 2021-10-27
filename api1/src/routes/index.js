@@ -2,7 +2,8 @@ const { Router } = require("express");
 const router = Router();
 
 const {
-  datos,
+  exportacion,
+  actualizar,
   getvotacion,
   insertvoto,
   getpartpoli,
@@ -13,6 +14,7 @@ router.get("/usuario/:rut", getvotacion);
 router.post("/usuario/:rut/votacion", insertvoto);
 router.get("/partido/:rut", getpartpoli);
 router.get("/login", login);
-router.get("/partido/exportacion", datos);
+router.get("/partido/:rut/exportacion", exportacion);
+router.get("/partido/:rut/actualizar", actualizar);
 
 module.exports = router;
