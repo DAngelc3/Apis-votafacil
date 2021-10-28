@@ -9,5 +9,5 @@ app.use(express.urlencoded({ extended: false })); //entiende los datos de los fo
 // Routes
 app.use(require("./routes/index")); //importa las rutas
 
-app.listen(4000);
-console.log("Server on port", 4000);
+app.listen(3001);
+console.log("Server on port", 3001);
