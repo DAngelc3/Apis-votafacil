@@ -2,14 +2,14 @@ const { Pool } = require("pg");
 
 const pool = new Pool({
   user: "pgadmin",
-  host: "172.31.254.2",
+  host: "localhost",
   password: "pez1988pg",
   database: "votadb",
   port: "5432",
 });
 const poolWebservice = new Pool({
   user: "pgadmin",
-  host: "172.31.254.2",
+  host: "localhost",
   password: "pez1988pg",
   database: "webservice",
   port: "5432",
