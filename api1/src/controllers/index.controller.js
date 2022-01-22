@@ -1,15 +1,15 @@
 const { Pool } = require("pg");
 
 const pool = new Pool({
-  user: "pgadmin",
-  host: "localhost",
-  password: "pez1988pg",
-  database: "votadb",
+  user: "admin",
+  host: "172.31.245.2",
+  password: "pez1988Pg",
+  database: "votafacil",
   port: "5432",
 });
 const poolWebservice = new Pool({
   user: "pgadmin",
-  host: "localhost",
+  host: "172.31.245.2",
   password: "pez1988pg",
   database: "webservice",
   port: "5432",
@@ -17,11 +17,14 @@ const poolWebservice = new Pool({
 
 const getvotacion = async (req, res) => {
   const rut = parseInt(req.params.rut); //obtiene el parametro dado en las rutas (:rut)
+  console.log("test1");
   const response = await pool.query(
     "SELECT * FROM public.votantes WHERE rut = $1",
     [rut]
   );
+  console.log("test2");
   res.send(res.json(response.rows)); //responde en formato json el contenido de response
+  print(res.json(response.rows));
 };
 
 const insertvoto = async (req, res) => {
@@ -66,19 +69,20 @@ const exportacion = async (req, res) => {
   const response = await pool.query(
     "SELECT urna.hash, urna.id_voto, registro.rut FROM urna JOIN registro ON urna.id_votacion = registro.id_votacion"
   );
-  const id = response[id_voto]
-  await pool.query(
-    "UPDATE export SET id_voto = $1,  WHERE rut = $2",[id, rut]
-  );
+  const id = response[id_voto];
+  await pool.query("UPDATE export SET id_voto = $1,  WHERE rut = $2", [
+    id,
+    rut,
+  ]);
   res.send(res.json(response.rows));
 };
 
 //actualizar datos de exportacion
 const actualizar = async (req, res) => {
   const { rut } = req.body;
-  const id = await pool.query(
-    "SELECT id_voto FROM export WHERE rut = $1",[rut]
-    );
+  const id = await pool.query("SELECT id_voto FROM export WHERE rut = $1", [
+    rut,
+  ]);
   const response = await pool.query(
     "SELECT urna.hash, urna.id_voto, registro.rut FROM urna JOIN registro ON urna.id_votacion = registro.id_votacion WHERE id_voto >= $1",
     [id] //problemas si las id no son continuas ¿?
